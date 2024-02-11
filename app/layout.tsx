@@ -1,6 +1,9 @@
 import { Analytics } from "@vercel/analytics/react";
-import { GeistSans } from "geist/font/sans";
+import "tw-elements-react/dist/css/tw-elements-react.min.css";
+import { Roboto } from "next/font/google";
 import "./globals.css";
+
+const roboto = Roboto({ weight: "400", subsets: ["latin"] });
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -18,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={GeistSans.className}>
+    <html lang="en" className={roboto.className}>
       <body className="bg-background text-foreground">
         <main className="min-h-screen flex flex-col items-center">
           {children}
