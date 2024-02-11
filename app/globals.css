@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+
+/* Template default below here */
+/* @layer base {
   :root {
     --background: 200 20% 98%;
     --btn-background: 200 10% 91%;
@@ -24,9 +26,9 @@
   * {
     @apply border-foreground/20;
   }
-}
+} */
 
-.animate-in {
+/* .animate-in {
   animation: animateIn 0.3s ease 0.15s both;
 }
 
@@ -39,4 +41,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
+} */
