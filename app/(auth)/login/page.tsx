@@ -75,6 +75,7 @@ export default function Login({
         Back
       </Link>
 
+    <h1>Sign in / Sign up</h1>
       <form
         className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
         action={signIn}
