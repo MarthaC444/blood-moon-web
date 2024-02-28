@@ -8,7 +8,8 @@
     "test:watch": "jest --watch",
     "cypress:open": "cypress open",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "db:gen:types": "supabase gen types typescript --project-id 'alnpdxebwladnkbxqxqb' --schema public > ./utils/supabase/database.d.ts"
   },
   "dependencies": {
     "@supabase/ssr": "latest",
@@ -43,6 +44,7 @@
     "encoding": "^0.1.13",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "storybook": "^7.6.13"
+    "storybook": "^7.6.13",
+    "supabase": "^1.145.4"
   }
 }
