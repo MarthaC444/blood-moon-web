@@ -4,7 +4,6 @@ module.exports = {
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./pages/**/*.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./node_modules/tw-elements-react/dist/js/**/*.js",
   ],
   theme: {
     extend: {
@@ -18,7 +17,5 @@ module.exports = {
       // },
     },
   },
-  darkMode: "class",
-  plugins: [require("tw-elements-react/dist/plugin.cjs")],
-  // plugins: [],
+  plugins: [],
 };
