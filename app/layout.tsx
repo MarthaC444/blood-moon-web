@@ -1,5 +1,4 @@
 import { Analytics } from "@vercel/analytics/react";
-import "tw-elements-react/dist/css/tw-elements-react.min.css";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 

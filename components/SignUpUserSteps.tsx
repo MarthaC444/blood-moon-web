@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Step from "./Step";
-import Code from "@/components/Code";
+import Code from "../components/Code";
 
 const create = `
 create table notes (
@@ -16,7 +16,7 @@ values
 `.trim();
 
 const server = `
-import { createClient } from '@/utils/supabase/server'
+import { createClient } from '../utils/supabase/server'
 import { cookies } from 'next/headers'
 
 export default async function Page() {
@@ -31,7 +31,7 @@ export default async function Page() {
 const client = `
 'use client'
 
-import { createClient } from '@/utils/supabase/client'
+import { createClient } from '../utils/supabase/client'
 import { useEffect, useState } from 'react'
 
 export default function Page() {
