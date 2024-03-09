@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "../../utils/supabase/server";
 
-import AuthButton from "@/components/AuthButton";
+import AuthButton from "../../components/AuthButton";
 
 export default async function DashboardLayout({
   children, // will be a page or nested layout

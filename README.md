@@ -20,8 +20,7 @@
 - [Next.js](https://nextjs.org/)
 - [Supabase](https://supabase.com/)
 - [Typescript](https://www.typescriptlang.org/)
-- [TailwindCSS](https://tailwindcss.com/)
-- [TW Elements](https://tw-elements.com/)
+- [component library]()
 - [Jest](https://jestjs.io/) and [React Testing Library](https://testing-library.com/)
 
 ## Feedback and issues
