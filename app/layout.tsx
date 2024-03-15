@@ -1,5 +1,6 @@
 import { Analytics } from "@vercel/analytics/react";
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import CssBaseline from "@mui/material/CssBaseline";
 // import { Roboto } from "next/font/google";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
@@ -28,7 +29,8 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-            {children}
+          <CssBaseline />
+          {children}
         </AppRouterCacheProvider>
         <Analytics />
       </body>
