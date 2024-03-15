@@ -1,8 +1,14 @@
 import { Analytics } from "@vercel/analytics/react";
-import { Roboto } from "next/font/google";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
+import CssBaseline from "@mui/material/CssBaseline";
+// import { Roboto } from "next/font/google";
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
 import "./globals.css";
 
-const roboto = Roboto({ weight: "400", subsets: ["latin"] });
+// const roboto = Roboto({ weight: "400", subsets: ["latin"] });
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -20,11 +26,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={roboto.className}>
-      <body className="bg-background text-foreground">
-        <main className="min-h-screen flex flex-col items-center">
+    <html lang="en">
+      <body>
+        <AppRouterCacheProvider>
+          <CssBaseline />
           {children}
-        </main>
+        </AppRouterCacheProvider>
         <Analytics />
       </body>
     </html>

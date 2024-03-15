@@ -1,50 +1,78 @@
-import { cookies } from "next/headers";
+import { headers, cookies } from "next/headers";
 import { createClient } from "../../../utils/supabase/server";
 import { redirect } from "next/navigation";
-import NextLink from "next/link";
 
+import AdbIcon from "@mui/icons-material/Adb";
 import AppBar from "@mui/material/AppBar";
+import { ArrowBackIosNew } from "@mui/icons-material";
 import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
 import Container from "@mui/material/Container";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import Grid from "@mui/material/Grid"; // replace with Grid version 2?
 import IconButton from "@mui/material/IconButton";
-import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid"; // replace with Grid version 2?
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import AdbIcon from "@mui/icons-material/Adb";
-import { ArrowBackIosNew } from "@mui/icons-material";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+
+// import {
+// AppBar, 
+//  Avatar,
+//  Box,
+//  Button,
+//  Checkbox,
+//  Container,
+//  FormControlLabel,
+//  IconButton,
+//  Grid,// replace with Grid version 2?
+//  TextField,
+//  Toolbar,
+//  Typography, } from "@mui/material";
+
+// import ArrowBackIos from "@mui/icons-material";
+// import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+// import AdbIcon from "@mui/icons-material/Adb";
 
 import Copyright from "../../../components/Copyright";
 
-export default function Login({
+export default function Register({
   searchParams,
 }: {
   searchParams: { message: string };
 }) {
-  const signIn = async (formData: FormData) => {
+
+  const signUp = async (formData: FormData) => {
     "use server";
 
+    const origin = headers().get("origin");
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const cookieStore = cookies();
     const supabase = createClient(cookieStore);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    console.log("form data", email, password);
+
+    const { error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo: `${origin}/auth/callback`,
+      },
     });
 
     if (error) {
-      return redirect("/login?message=Could not authenticate user");
+      console.log("error message", error);
+      return redirect(
+        "/register?message=Something went wrong. Please try again later."
+      );
     }
 
-    return redirect("/");
+    return redirect(
+      "/register?message=Check email to continue sign in process"
+    );
   };
 
   return (
@@ -77,9 +105,9 @@ export default function Login({
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
-            Sign in
+            Register
           </Typography>
-          <form action={signIn}>
+          <form action={signUp}>
             <TextField
               margin="normal"
               required
@@ -105,26 +133,15 @@ export default function Login({
               label="Remember me"
             />
             <Button
-              type="submit"
               fullWidth
               variant="contained"
+              type="submit"
               sx={{ mt: 3, mb: 2 }}
             >
-              Sign In
+              Sign Up
             </Button>
           </form>
-          <Grid container spacing={2}>
-            <Grid item xs>
-              <Link href="/" component={NextLink} variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="/register" variant="body2">
-                Need an account?
-              </Link>
-            </Grid>
-          </Grid>
+          <Grid container></Grid>
           {searchParams?.message && <p>{searchParams.message}</p>}
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
