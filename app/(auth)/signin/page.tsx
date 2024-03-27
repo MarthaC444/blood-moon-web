@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { createClient } from "../../../utils/supabase/server";
 import { redirect } from "next/navigation";
 import NextLink from "next/link";
+import { signIn } from "../actions";
 
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
@@ -17,35 +18,35 @@ import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import AdbIcon from "@mui/icons-material/Adb";
-import { ArrowBackIosNew } from "@mui/icons-material";
+import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 import Copyright from "../../../components/Copyright";
 
-export default function Login({
+export default function SignIn({
   searchParams,
 }: {
   searchParams: { message: string };
 }) {
-  const signIn = async (formData: FormData) => {
-    "use server";
+  // const signIn = async (formData: FormData) => {
+  //   "use server";
 
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
+  //   const email = formData.get("email") as string;
+  //   const password = formData.get("password") as string;
+  //   const cookieStore = cookies();
+  //   const supabase = createClient(cookieStore);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+  //   const { error } = await supabase.auth.signInWithPassword({
+  //     email,
+  //     password,
+  //   });
 
-    if (error) {
-      return redirect("/login?message=Could not authenticate user");
-    }
+  //   if (error) {
+  //     return redirect("/signin?message=Could not authenticate user");
+  //   }
 
-    return redirect("/");
-  };
+  //   return redirect("/dashboard");
+  // };
 
   return (
     <Box>
