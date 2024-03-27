@@ -35,13 +35,13 @@ export default async function Index() {
       ))
     : (conditionalButton = (
         <Button
-          href="/login"
+          href="/signin"
           color="inherit"
           endIcon={<LoginIcon sx={{ mr: 1 }} />}
           type="button"
-          aria-label="Go to login page"
+          aria-label="Go to sign in page"
         >
-          login
+          sign in
         </Button>
       ));
 
@@ -54,12 +54,12 @@ export default async function Index() {
           </IconButton>
           {conditionalButton}
           {/* <Button
-            href="/login"
+            href="/signin"
             color="inherit"
             endIcon={<LoginIcon sx={{ mr: 1 }} />}
             type="button"
           >
-            login
+            sign in
           </Button> */}
         </Toolbar>
       </AppBar>
