@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 import NextLink from "next/link";
 import { signIn } from "../actions";
 
+import AdbIcon from "@mui/icons-material/Adb";
+import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+
 import AppBar from "@mui/material/AppBar";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -14,12 +18,10 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import Grid from "@mui/material/Grid"; // replace with Grid version 2?
 import IconButton from "@mui/material/IconButton";
 import Link from "@mui/material/Link";
+import Stack from "@mui/material/Stack"
 import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import AdbIcon from "@mui/icons-material/Adb";
-import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 
 import Copyright from "../../../components/Copyright";
 
@@ -28,6 +30,7 @@ export default function SignIn({
 }: {
   searchParams: { message: string };
 }) {
+  // MOVED TO ACTIONS.TS
   // const signIn = async (formData: FormData) => {
   //   "use server";
 
@@ -66,69 +69,75 @@ export default function SignIn({
         </Toolbar>
       </AppBar>
       <Container component="main" maxWidth="xs">
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
+        <Stack
+          sx={{ height: "90vh" }}
+          direction={"column"}
+          justifyContent={"space-between"}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Sign in
-          </Typography>
-          <form action={signIn}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign In
-            </Button>
-          </form>
-          <Grid container spacing={2}>
-            <Grid item xs>
-              <Link href="/" component={NextLink} variant="body2">
-                Forgot password?
-              </Link>
+          <Box
+            sx={{
+              marginTop: 8,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <form action={signIn}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign In
+              </Button>
+            </form>
+            <Grid container spacing={2}>
+              <Grid item xs>
+                <Link href="/reset-request" component={NextLink} variant="body2">
+                  Forgot password?
+                </Link>
+              </Grid>
+              <Grid item>
+                <Link href="/register" variant="body2">
+                  Need an account?
+                </Link>
+              </Grid>
             </Grid>
-            <Grid item>
-              <Link href="/register" variant="body2">
-                Need an account?
-              </Link>
-            </Grid>
-          </Grid>
-          {searchParams?.message && <p>{searchParams.message}</p>}
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
+            {searchParams?.message && <p>{searchParams.message}</p>}
+          </Box>
+          <Copyright sx={{ mt: 8, mb: 4 }} />
+        </Stack>
       </Container>
     </Box>
   );
