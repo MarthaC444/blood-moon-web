@@ -19,7 +19,7 @@ export default async function Page() {
     const cookieStore = cookies();
     const supabase = createClient(cookieStore);
     await supabase.auth.signOut();
-    return redirect("/login");
+    return redirect("/signin");
   };
 
   return (

@@ -1,79 +1,126 @@
-import { headers, cookies } from "next/headers";
-import { createClient } from "../../../utils/supabase/server";
-import { redirect } from "next/navigation";
+"use client";
+import React, { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import * as yup from "yup";
+
+import { signUp, type SignUpInfo } from "../actions";
+
+import Copyright from "../../../components/Copyright";
 
 import AdbIcon from "@mui/icons-material/Adb";
+import ArrowBackIosNew from "@mui/icons-material/ArrowBackIosNew";
+import CloseIcon from "@mui/icons-material/Close";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+
+import Alert from "@mui/material/Alert";
 import AppBar from "@mui/material/AppBar";
-import { ArrowBackIosNew } from "@mui/icons-material";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
+import Collapse from "@mui/material/Collapse";
 import Container from "@mui/material/Container";
+import FormControl from "@mui/material/FormControl";
 import FormControlLabel from "@mui/material/FormControlLabel";
-import IconButton from "@mui/material/IconButton";
+import FormHelperText from "@mui/material/FormHelperText";
 import Grid from "@mui/material/Grid"; // replace with Grid version 2?
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import InputLabel from "@mui/material/InputLabel";
+import Link from "@mui/material/Link";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 
-// import {
-// AppBar, 
-//  Avatar,
-//  Box,
-//  Button,
-//  Checkbox,
-//  Container,
-//  FormControlLabel,
-//  IconButton,
-//  Grid,// replace with Grid version 2?
-//  TextField,
-//  Toolbar,
-//  Typography, } from "@mui/material";
+import Snackbar, { SnackbarOrigin } from "@mui/material/Snackbar";
 
-// import ArrowBackIos from "@mui/icons-material";
-// import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-// import AdbIcon from "@mui/icons-material/Adb";
+const validationSchema = yup.object({
+  email: yup
+    .string()
+    .email("Enter a valid email")
+    .required("Email is required"),
+  password: yup
+    .string()
+    .min(8, "Password must be of minimum 8 characters length")
+    .max(26, "Password must be less than 27 characters in length")
+    .matches(/[a-z]+/, "Password must contain at least one lowercase letter")
+    .matches(/[A-Z]+/, "Password must contain at least one uppercase letter")
+    .matches(/[0-9]+/, "Password must contain at least one number")
+    .required("Password is required"),
+  confirm: yup
+    .string()
+    .min(8, "Password must be of minimum 8 characters length")
+    .max(26, "Password must be less than 27 characters in length")
+    .required("Confirming the password is required")
+    .oneOf([yup.ref("password")] as const, "Passwords do not match"),
+});
 
-import Copyright from "../../../components/Copyright";
+interface SignUpFormData extends SignUpInfo {
+  confirm: string;
+}
+
+interface AlertInfo {
+  message?: string;
+  severity?: "error" | "success" | "warning";
+}
+
+interface State extends SnackbarOrigin {
+  open: boolean;
+}
 
 export default function Register({
-  searchParams,
+  searchParams, //Remove?
 }: {
-  searchParams: { message: string };
-}) {
-
-  const signUp = async (formData: FormData) => {
-    "use server";
-
-    const origin = headers().get("origin");
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    const cookieStore = cookies();
-    const supabase = createClient(cookieStore);
-
-    console.log("form data", email, password);
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
-    });
-
-    if (error) {
-      console.log("error message", error);
-      return redirect(
-        "/register?message=Something went wrong. Please try again later."
-      );
-    }
-
-    return redirect(
-      "/register?message=Check email to continue sign in process"
-    );
+  searchParams?: {
+    message?: string;
+    severity?: "error" | "success" | "warning";
   };
+}) {
+  const [showPassword, setShowPassword] = useState(false);
+  // const [open, setOpen] = React.useState(false);
+  const [alert, setAlert] = useState<AlertInfo>({});
+  const [state, setState] = useState<State>({
+    open: false,
+    vertical: "top",
+    horizontal: "center",
+  });
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
+
+  const handleClose = () => {
+    setState({ ...state, open: false });
+    setAlert({});
+  };
+
+  const { vertical, horizontal, open } = state;
+
+  const initialValues: SignUpFormData = {
+    email: "",
+    password: "",
+    confirm: "",
+  };
+
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: async (values) => {
+      const res = await signUp(values); // needed to use setAlert, alert doesn't just get updated
+      setAlert(res);
+      alert.message ? setState({ ...state, open: true }) : null;
+
+      // TODO reset form
+    },
+  });
 
   return (
     <Box>
@@ -83,7 +130,7 @@ export default function Register({
             <AdbIcon />
           </IconButton>
           <Button
-            href="/"
+            href="/signin"
             color="inherit"
             startIcon={<ArrowBackIosNew sx={{ mr: 1 }} />}
             type="button"
@@ -93,58 +140,169 @@ export default function Register({
         </Toolbar>
       </AppBar>
       <Container component="main" maxWidth="xs">
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
+        <Stack
+          sx={{ height: "90vh" }}
+          direction={"column"}
+          justifyContent={"space-between"}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Register
-          </Typography>
-          <form action={signUp}>
-            <TextField
+          <Box
+            alignItems="right"
+            sx={{
+              marginTop: { xs: 2, sm: 8 },
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Register
+            </Typography>
+
+            <form onSubmit={formik.handleSubmit}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
+                autoFocus
+              />
+              <FormControl
+                margin="normal"
+                required
+                fullWidth
+                variant="outlined"
+              >
+                <InputLabel
+                  htmlFor="password"
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                >
+                  Password
+                </InputLabel>
+                <OutlinedInput
+                  id="password"
+                  label="Password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+                <FormHelperText
+                  id="password"
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                >
+                  {formik.touched.password && formik.errors.password}
+                </FormHelperText>
+              </FormControl>
+              {/* <TextField
               margin="normal"
               required
               fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
               id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              fullWidth
-              variant="contained"
-              type="submit"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign Up
-            </Button>
-          </form>
-          <Grid container></Grid>
-          {searchParams?.message && <p>{searchParams.message}</p>}
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
+              label="Password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
+            /> */}
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="confirm"
+                label="Confirm Password"
+                name="confirm"
+                type="password"
+                value={formik.values.confirm}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.confirm && Boolean(formik.errors.confirm)}
+                helperText={formik.touched.confirm && formik.errors.confirm}
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              />
+              <Button
+                fullWidth
+                variant="contained"
+                type="submit"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign Up
+              </Button>
+            </form>
+            <Grid container justifyContent="center" gap={2} margin={2}>
+              <Link href="/signin" variant="body2">
+                Already have an account? Sign in
+              </Link>
+              <Snackbar
+                open={open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                key={vertical + horizontal}
+              >
+                <Alert
+                  onClose={handleClose}
+                  severity={alert.severity}
+                  variant="filled"
+                  sx={{ width: "100%" }}
+                >
+                  {alert.message}
+                </Alert>
+              </Snackbar>
+              {/* 
+            {alert.message ? (
+              <Alert
+                severity={alert.severity}
+                onClose={() => {
+                  setAlert({});
+                }}
+              >
+                {alert.message}
+              </Alert>
+            ) : null} */}
+              {/* {searchParams?.message && <p>{searchParams.message}</p>} */}
+            </Grid>
+          </Box>
+          <Copyright sx={{ mt: 8, mb: 4 }} />
+        </Stack>
       </Container>
     </Box>
   );
