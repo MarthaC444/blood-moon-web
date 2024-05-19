@@ -1,4 +1,3 @@
-
 import { createClient } from "../utils/supabase/server";
 import { cookies } from "next/headers";
 import Box from "@mui/material/Box";
@@ -53,14 +52,6 @@ export default async function Index() {
             <AdbIcon sx={{ mr: 1 }} />
           </IconButton>
           {conditionalButton}
-          {/* <Button
-            href="/signin"
-            color="inherit"
-            endIcon={<LoginIcon sx={{ mr: 1 }} />}
-            type="button"
-          >
-            sign in
-          </Button> */}
         </Toolbar>
       </AppBar>
       <Typography variant="h3" component="h1">
