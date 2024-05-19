@@ -28,7 +28,7 @@ export default async function AuthButton() {
     const cookieStore = cookies();
     const supabase = createClient(cookieStore);
     await supabase.auth.signOut();
-    return redirect("/login");
+    return redirect("/signin");
   };
 
   return user ? (
@@ -45,11 +45,11 @@ export default async function AuthButton() {
     </Box>
   ) : (
     <Box display="flex">
-      <Button href="/login" color="inherit" endIcon={<LoginIcon />} type="button">
+      <Button href="/signin" color="inherit" endIcon={<LoginIcon />} type="button">
         Sign In
         {/* <LoginIcon sx={{ alignSelf: "center", mx: 0.5 }} /> */}
       </Button>
-      {/* <Link component={NextLink} href="/login"></Link> */}
+      {/* <Link component={NextLink} href="/signin"></Link> */}
     </Box>
   );
 }
