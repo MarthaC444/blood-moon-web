@@ -31,9 +31,12 @@ import InputAdornment from "@mui/material/InputAdornment";
 import InputLabel from "@mui/material/InputLabel";
 import Link from "@mui/material/Link";
 import OutlinedInput from "@mui/material/OutlinedInput";
+import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
+
+import Snackbar, { SnackbarOrigin } from "@mui/material/Snackbar";
 
 const validationSchema = yup.object({
   email: yup
@@ -65,13 +68,26 @@ interface AlertInfo {
   severity?: "error" | "success" | "warning";
 }
 
+interface State extends SnackbarOrigin {
+  open: boolean;
+}
+
 export default function Register({
   searchParams, //Remove?
 }: {
-  searchParams?: { message?: string; severity?: "error" | "success" | "warning" };
+  searchParams?: {
+    message?: string;
+    severity?: "error" | "success" | "warning";
+  };
 }) {
+  const [showPassword, setShowPassword] = useState(false);
+  // const [open, setOpen] = React.useState(false);
   const [alert, setAlert] = useState<AlertInfo>({});
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [state, setState] = useState<State>({
+    open: false,
+    vertical: "top",
+    horizontal: "center",
+  });
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -80,6 +96,13 @@ export default function Register({
   ) => {
     event.preventDefault();
   };
+
+  const handleClose = () => {
+    setState({ ...state, open: false });
+    setAlert({});
+  };
+
+  const { vertical, horizontal, open } = state;
 
   const initialValues: SignUpFormData = {
     email: "",
@@ -91,20 +114,13 @@ export default function Register({
     initialValues,
     validationSchema,
     onSubmit: async (values) => {
-      const alert = await signUp(values);
+      const res = await signUp(values); // needed to use setAlert, alert doesn't just get updated
+      setAlert(res);
+      alert.message ? setState({ ...state, open: true }) : null;
+
       // TODO reset form
     },
   });
-
-  // useEffect(() => {
-  //   if (searchParams?.message) {
-  //     const {message, severity} = searchParams;
-  //     setAlert({
-  //       message,
-  //       severity,
-  //     })
-  //   }
-  // }, [searchParams]);
 
   return (
     <Box>
@@ -124,84 +140,94 @@ export default function Register({
         </Toolbar>
       </AppBar>
       <Container component="main" maxWidth="xs">
-        <Box
-          alignItems="right"
-          sx={{
-            marginTop: { xs: 2, sm: 8 },
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
+        <Stack
+          sx={{ height: "90vh" }}
+          direction={"column"}
+          justifyContent={"space-between"}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Register
-          </Typography>
+          <Box
+            alignItems="right"
+            sx={{
+              marginTop: { xs: 2, sm: 8 },
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Register
+            </Typography>
 
-          <form onSubmit={formik.handleSubmit}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              value={formik.values.email}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.email && Boolean(formik.errors.email)}
-              helperText={formik.touched.email && formik.errors.email}
-              autoFocus
-            />
-            <FormControl margin="normal" required fullWidth variant="outlined">
-              <InputLabel
-                htmlFor="password"
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
-                }
-              >
-                Password
-              </InputLabel>
-              <OutlinedInput
-                id="password"
-                label="Password"
-                name="password"
-                type={showPassword ? "text" : "password"}
-                value={formik.values.password}
+            <form onSubmit={formik.handleSubmit}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                value={formik.values.email}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
-                }
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showPassword ? (
-                        <VisibilityOffIcon />
-                      ) : (
-                        <VisibilityIcon />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                }
+                error={formik.touched.email && Boolean(formik.errors.email)}
+                helperText={formik.touched.email && formik.errors.email}
+                autoFocus
               />
-              <FormHelperText
-                id="password"
-                error={
-                  formik.touched.password && Boolean(formik.errors.password)
-                }
+              <FormControl
+                margin="normal"
+                required
+                fullWidth
+                variant="outlined"
               >
-                {formik.touched.password && formik.errors.password}
-              </FormHelperText>
-            </FormControl>
-            {/* <TextField
+                <InputLabel
+                  htmlFor="password"
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                >
+                  Password
+                </InputLabel>
+                <OutlinedInput
+                  id="password"
+                  label="Password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+                <FormHelperText
+                  id="password"
+                  error={
+                    formik.touched.password && Boolean(formik.errors.password)
+                  }
+                >
+                  {formik.touched.password && formik.errors.password}
+                </FormHelperText>
+              </FormControl>
+              {/* <TextField
               margin="normal"
               required
               fullWidth
@@ -215,44 +241,68 @@ export default function Register({
               error={formik.touched.password && Boolean(formik.errors.password)}
               helperText={formik.touched.password && formik.errors.password}
             /> */}
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="confirm"
-              label="Confirm Password"
-              name="confirm"
-              type="password"
-              value={formik.values.confirm}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.confirm && Boolean(formik.errors.confirm)}
-              helperText={formik.touched.confirm && formik.errors.confirm}
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
-            <Button
-              fullWidth
-              variant="contained"
-              type="submit"
-              sx={{ mt: 3, mb: 2 }}
-            >
-              Sign Up
-            </Button>
-          </form>
-          <Grid container justifyContent="center" gap={2} margin={2}>
-            <Link href="/signin" variant="body2">
-              Already have an account? Sign in
-            </Link>
-            {alert.message ? <Alert severity={alert.severity} onClose={() => {setAlert({})}}>
-              {alert.message}
-            </Alert> : null}
-            {/* {searchParams?.message && <p>{searchParams.message}</p>} */}
-          </Grid>
-        </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="confirm"
+                label="Confirm Password"
+                name="confirm"
+                type="password"
+                value={formik.values.confirm}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.confirm && Boolean(formik.errors.confirm)}
+                helperText={formik.touched.confirm && formik.errors.confirm}
+              />
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              />
+              <Button
+                fullWidth
+                variant="contained"
+                type="submit"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign Up
+              </Button>
+            </form>
+            <Grid container justifyContent="center" gap={2} margin={2}>
+              <Link href="/signin" variant="body2">
+                Already have an account? Sign in
+              </Link>
+              <Snackbar
+                open={open}
+                autoHideDuration={6000}
+                onClose={handleClose}
+                key={vertical + horizontal}
+              >
+                <Alert
+                  onClose={handleClose}
+                  severity={alert.severity}
+                  variant="filled"
+                  sx={{ width: "100%" }}
+                >
+                  {alert.message}
+                </Alert>
+              </Snackbar>
+              {/* 
+            {alert.message ? (
+              <Alert
+                severity={alert.severity}
+                onClose={() => {
+                  setAlert({});
+                }}
+              >
+                {alert.message}
+              </Alert>
+            ) : null} */}
+              {/* {searchParams?.message && <p>{searchParams.message}</p>} */}
+            </Grid>
+          </Box>
+          <Copyright sx={{ mt: 8, mb: 4 }} />
+        </Stack>
       </Container>
     </Box>
   );
