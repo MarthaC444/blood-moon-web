@@ -1,6 +1,10 @@
 import { createClient } from "../utils/supabase/server";
 import { cookies } from "next/headers";
+
+import Copyright from "../components/Copyright";
+
 import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
 
 import AppBar from "@mui/material/AppBar";
@@ -54,9 +58,48 @@ export default async function Index() {
           {conditionalButton}
         </Toolbar>
       </AppBar>
-      <Typography variant="h3" component="h1">
-        this is your landing page
-      </Typography>
+      <Container maxWidth="md">
+        <Typography variant="h2" component="h1" sx={{ my: 4 }}>
+          The Blood Moon Web App begins.
+        </Typography>
+        <Typography variant="h4" component="h2" sx={{ mt: 4, mb: 1 }}>
+          Introduction
+        </Typography>
+        <Typography variant="body1">
+          This is my first Next.js project. Presently, it has working Auth. Click on the "Sign In" link in my navigation bar
+          and have a fun time registering an account!
+        </Typography>
+        <Typography variant="h4" component="h2" sx={{ my: 3, mb: 1 }}>
+          Technologies
+        </Typography>
+        <Typography variant="h5" component="h3" sx={{ my: 3, mb: 1 }}>
+          Implemented
+        </Typography>
+        <ul>
+          <li>Next.js</li>
+          <li>Typescript</li>
+          <li>Supabase/PostgreSQL</li>
+          <li>Material UI</li>
+        </ul>
+        <Typography variant="h5" component="h3" sx={{ my: 3, mb: 1 }}>
+          Planned
+        </Typography>
+        <ul>
+          <li>Cypress, React Testing Library</li>
+          <li>Storybook</li>
+        </ul>
+        <Typography variant="h4" component="h2" sx={{ mt: 4, mb: 1 }}>
+          What will Blood Moon do?
+        </Typography>
+        <Typography variant="body1">
+          The idea of Blood Moon combines two of my interests, coding and
+          shamanism. Through techniques old and new the app will present paths
+          and opportunities for creating connection, meaning and purpose through
+          interaction and alignment with the life force of the world around us.
+        </Typography>
+      </Container>
+      <Copyright sx={{ mt: 8, mb: 4 }} />
     </Box>
   );
 }
+Box;
