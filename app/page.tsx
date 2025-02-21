@@ -93,7 +93,7 @@ export default async function Index() {
         </Typography>
         <Typography variant="body1">
           The idea of Blood Moon combines two of my interests, coding and
-          shamanism. Through techniques old and new the app will present paths
+          animism. Through techniques old and new the app will present paths
           and opportunities for creating connection, meaning and purpose through
           interaction and alignment with the life force of the world around us.
         </Typography>
